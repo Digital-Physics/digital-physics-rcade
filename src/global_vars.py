@@ -135,8 +135,8 @@ import dialogue as dl
 # this set of global variables is like the "state" of the game
 world_level = "top"
 movie_idx = None
-SCREEN_WIDTH = 750
-# SCREEN_WIDTH = 480
+SCREEN_WIDTH = 750 # need to update
+# SCREEN_WIDTH = 480 
 SCREEN_HEIGHT = SCREEN_WIDTH
 # display_surface is the actual cabinet window (336x262 native CRT resolution)
 # screen is the internal game surface — all logic, drawing, and collision stays at 750x750
