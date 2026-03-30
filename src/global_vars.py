@@ -142,9 +142,9 @@ SCREEN_HEIGHT = SCREEN_WIDTH
 # screen is the internal game surface — all logic, drawing, and collision stays at 750x750
 # each frame, screen is scaled down onto display_surface before flip
 # DISPLAY_WIDTH = 336
-DISPLAY_WIDTH = 336 * 750/336
+DISPLAY_WIDTH = 336 * 2
 # DISPLAY_HEIGHT = 262
-DISPLAY_HEIGHT = 262 * 750/336
+DISPLAY_HEIGHT = 262 * 2
 display_surface = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
 screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 moving_left = False
