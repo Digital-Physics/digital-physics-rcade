@@ -1061,7 +1061,17 @@ class Game:
             # brightness_surface.fill((50, 50, 50))
             # gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
-            boost_crt_colors(gv.screen)
+            # boost_crt_colors(gv.screen)
+
+            # contrast pull-down
+            contrast_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
+            contrast_surface.fill((210, 210, 210))
+            gv.screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+
+            # brightness lift with a warm tint to counteract the blue cast
+            brightness_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
+            brightness_surface.fill((60, 50, 30))  # more red/green than blue
+            gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
             if gv.save_screenshots and gv.master_save_screenshots:
