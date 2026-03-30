@@ -19,6 +19,22 @@ import end_room as er
 import particle_affinity_room as pr
 
 
+# def boost_crt_colors(surface):
+#     pa = pygame.PixelArray(surface)
+#     pa.replace((23, 27, 30),    (10, 10, 60),    distance=5/255)
+#     pa.replace((167, 179, 144), (120, 180, 80),  distance=5/255)
+#     pa.replace((149, 131, 79),  (180, 110, 40),  distance=10/255)
+#     pa.replace((93, 117, 129),  (60, 140, 180),  distance=3/255)
+#     del pa
+
+def boost_crt_colors(surface):
+    pa = pygame.PixelArray(surface)
+    pa.replace((23, 27, 30),    (10, 10, 60),    distance=5/255)
+    pa.replace((167, 179, 144), (120, 180, 80),  distance=5/255)
+    pa.replace((149, 131, 79),  (180, 110, 40),  distance=10/255)
+    # pa.replace((93, 117, 129),  (60, 140, 180),  distance=3/255)  # too broad, affects background
+    del pa
+
 class Game:
     async def run(self):
         pygame.mixer.music.load(gv.resource_path("audio/rain_and_thunder.ogg"))
@@ -50,6 +66,11 @@ class Game:
             # other game loops that have been inserted in the top level (not nested in functions) 
             # to be compatible w/ how pygbag uses asyncio
             elif gv.world_level != "top":
+                # x, y = gv.khatchig.rect.centerx, gv.khatchig.rect.centery
+                # for dx, dy in [(0,0), (30,0), (-30,0), (0,30)]:
+                #     color = gv.screen.get_at((x+dx, y+dy))
+                #     print(f"offset ({dx:+d},{dy:+d}): {color}")
+
                 ## state ##
                 if gv.world_level == "movie":
                     sorted_file_list = sorted(os.listdir(gv.resource_path(f"img/movie_png_seq{gv.movie_idx}")))
@@ -1031,14 +1052,16 @@ class Game:
             prev_b = curr_b
 
             # darken darks (contrast pull-down)
-            contrast_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
-            contrast_surface.fill((210, 210, 210))  # values < 255 multiply (darken)
-            gv.screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+            # contrast_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
+            # contrast_surface.fill((210, 210, 210))  # values < 255 multiply (darken)
+            # gv.screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
 
-            # then lift brightness back up
-            brightness_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
-            brightness_surface.fill((50, 50, 50))
-            gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+            # # then lift brightness back up
+            # brightness_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
+            # brightness_surface.fill((50, 50, 50))
+            # gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+
+            boost_crt_colors(gv.screen)
 
             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
             if gv.save_screenshots and gv.master_save_screenshots:
