@@ -1030,6 +1030,16 @@ class Game:
             prev_a = curr_a
             prev_b = curr_b
 
+            # darken darks (contrast pull-down)
+            contrast_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
+            contrast_surface.fill((210, 210, 210))  # values < 255 multiply (darken)
+            gv.screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+
+            # then lift brightness back up
+            brightness_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
+            brightness_surface.fill((50, 50, 50))
+            gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+
             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
             if gv.save_screenshots and gv.master_save_screenshots:
                 screen_shot_num = screen_shot_num + 1
