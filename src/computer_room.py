@@ -140,56 +140,6 @@ class ProjectionViewer:
             center = wireframe.findcenter()
             getattr(wireframe, rotateFunction)(center, theta)
 
-    # def run(self):
-    #     """ self-contained loop in main game loop """
-    #     # if intro_fade.fade():
-    #     img_flip = True
-    #     # while running:
-    #     while gv.world_level == "computer_room":
-    #         for event in pygame.event.get():
-    #             # should put in the key_up events or turn moving left and right to false
-    #             if event.type == pygame.QUIT:
-    #                 pygame.quit()
-    #             elif event.type == pygame.KEYDOWN:
-    #                 if event.key == pygame.locals.K_SPACE:
-    #                     gv.world_level = "top"
-    #                     gv.door_sfx.play()
-    #                 if event.key in key_to_function:
-    #                     # dictionary returns a method (run on itself) which updates it's own 3d wireframe display
-    #                     key_to_function[event.key](self)
-    #
-    #         if pygame.time.get_ticks() - self.last_time_check > gv.ANIMATION_INTERVAL:
-    #             self.last_time_check = pygame.time.get_ticks()
-    #             img_flip = not img_flip
-    #
-    #         # draw appropriate background
-    #         if img_flip:
-    #             if self.cube_match and self.tet_match:
-    #                 gv.screen.blit(gv.escher_both_img, (0, 0))
-    #             elif self.cube_match:
-    #                 gv.screen.blit(gv.escher_cube_img, (0, 0))
-    #             elif self.tet_match:
-    #                 gv.screen.blit(gv.escher_tet_img, (0, 0))
-    #             else:
-    #                 gv.screen.blit(gv.escher_img, (0, 0))
-    #         else:
-    #             if self.cube_match and self.tet_match:
-    #                 gv.screen.blit(gv.escher2_both_img, (0, 0))
-    #             elif self.cube_match:
-    #                 gv.screen.blit(gv.escher2_cube_img, (0, 0))
-    #             elif self.tet_match:
-    #                 gv.screen.blit(gv.escher2_tet_img, (0, 0))
-    #             else:
-    #                 gv.screen.blit(gv.escher2_img, (0, 0))
-    #
-    #         # draw wireframes
-    #         self.display()
-    #         # the last thing we lay on top before we
-    #         if not self.intro_complete:
-    #             if gv.intro_fade.fade():
-    #                 self.intro_complete = True
-    #         pygame.display.update()
-
     # for level 1 background, not the computer room
     def run_bg(self, trans_dist, reverse=1):
         self.translateAll("x", trans_dist/3)
