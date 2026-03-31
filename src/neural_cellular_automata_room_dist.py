@@ -12,13 +12,7 @@ class NcaRoomDist:
         self.last_time_check = pygame.time.get_ticks()
         self.counter = 0
         self.temp_message = False
-        self.key_to_function = {
-            pygame.K_LEFT: (lambda x: x.translate('left')),
-            pygame.K_RIGHT: (lambda x: x.translate('right')),
-            pygame.K_UP: (lambda x: x.translate('up')),
-            pygame.K_DOWN: (lambda x: x.translate('down')),
-            pygame.K_SLASH: (lambda x: x.translate('clear')),
-            pygame.K_PERIOD: (lambda x: x.translate("add"))}
+        self.last_move_time = pygame.time.get_ticks()  # rate-limit d-pad movement
 
     def translate(self, direction):
         if direction == "right":
@@ -36,7 +30,7 @@ class NcaRoomDist:
         else:
             temp_dialogue = gv.dialogue["notkhatchig"][gv.dialogue_counter % len(gv.dialogue["notkhatchig"])][:]
 
-        f.draw_dialogue(temp_dialogue, 180, 250)
+        f.draw_dialogue(temp_dialogue, 300, 250)
         if pygame.time.get_ticks() - gv.last_time_check_dialogue > gv.DIALOGUE_INTERVAL:
             gv.dialogue_counter_flag = True
             gv.dialogue_counter += 1  # update outside main game loop needed because we are in self-contained loop

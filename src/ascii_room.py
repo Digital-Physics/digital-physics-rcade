@@ -20,9 +20,7 @@ class Ascii_room():
             img = pygame.transform.scale(img, (112, 272))
             self.img_list.append(img)
 
-        self.key_to_function = {
-            pygame.K_LEFT: (lambda x: x.translate('left')),
-            pygame.K_RIGHT: (lambda x: x.translate('right'))}
+        self.last_move_time = pygame.time.get_ticks()  # rate-limit d-pad movement
 
     def translate(self, direction):
         if direction == "right":

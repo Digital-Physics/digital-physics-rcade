@@ -1,12 +1,12 @@
 {
   "$schema": "https://rcade.dev/manifest.schema.json",
   "name": "digital-physics",
-  "display_name": "digital-physics",
+  "display_name": "Digital Physics",
   "description": "Digital Physics",
   "visibility": "public",
   "authors": [
     {
-      "display_name": "Jon K."
+      "display_name": "Jon Khanlian"
     }
   ],
   "dependencies": [

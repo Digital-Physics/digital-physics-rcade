@@ -15,11 +15,7 @@ class MonitorRoom:
         self.next_frame = None
         self.counter = 0
         self.cam_zoom = 0
-        self.key_to_function = {
-            pygame.K_LEFT:   (lambda x: x.rotate(-2)),
-            pygame.K_RIGHT:  (lambda x: x.rotate(2)),
-            pygame.K_DOWN:   (lambda x: x.zoom(2)),
-            pygame.K_UP:     (lambda x: x.zoom(-2))}
+        self.last_move_time = pygame.time.get_ticks()  # rate-limit d-pad movement
         self.cam_img_list = []
 
         for i in range(3):
@@ -48,60 +44,3 @@ class MonitorRoom:
                                  rotated.get_rect().center[1] - 170//2 - self.cam_zoom,
                                  255 + 2*self.cam_zoom, 170 + 2*self.cam_zoom)
         return sub
-
-    # def run(self):
-    #     """ self-contained loop in main game loop """
-    #     if gv.holding_object == 77:
-    #         gv.success_sfx.play()
-    #         gv.to_do["explore feedback"] = True
-    #         movie.play(5)  # need to update video to make it full screen
-    #
-    #     img_flip = True
-    #
-    #     while gv.world_level == "monitor_room":
-    #         for event in pygame.event.get():
-    #             if event.type == pygame.QUIT:
-    #                 pygame.quit()
-    #             elif event.type == pygame.KEYDOWN:
-    #                 if event.key == pygame.locals.K_SPACE:
-    #                     gv.world_level = "top"
-    #                     gv.door_sfx.play()
-    #                 if event.key in self.key_to_function:
-    #                     # dictionary returns a method (run on itself)
-    #                     self.key_to_function[event.key](self)
-    #
-    #         if pygame.time.get_ticks() - self.last_time_check > gv.ANIMATION_INTERVAL:
-    #             self.last_time_check = pygame.time.get_ticks()
-    #             img_flip = not img_flip
-    #
-    #         if img_flip:
-    #             gv.screen.blit(gv.escher15_img, (0, 0))
-    #         else:
-    #             gv.screen.blit(gv.escher16_img, (0, 0))
-    #
-    #         if gv.holding_object == 77:
-    #             self.counter += 1
-    #
-    #             if self.next_frame:
-    #                 gv.screen.blit(self.next_frame, (70, 303))  # , special_flags=pygame.BLEND_RGBA_MULT)
-    #             sub = gv.screen.copy()
-    #             sub = self.get_rotated_subsurface(sub)
-    #             gv.tile_on_monitor = pygame.transform.scale(sub, (255, 170))
-    #             gv.screen.blit(gv.tile_on_monitor, (70, 303))  # , special_flags=pygame.BLEND_RGBA_MULT)
-    #             gv.screen.blit(self.monitor_text, (80, 310))
-    #             if self.counter % 10 == 0:
-    #                 self.next_frame = gv.screen.subsurface(70, 303, 255, 170).copy()
-    #                 self.next_frame = pygame.transform.scale(self.next_frame, (255, 170))
-    #         else:
-    #             gv.screen.blit(gv.tile_on_monitor, (70, 303))
-    #             gv.screen.blit(self.monitor_text, (80, 310))
-    #
-    #         if not self.intro_complete:
-    #             if gv.intro_fade.fade():
-    #                 self.intro_complete = True
-    #         pygame.display.update()
-
-
-    # def create():
-    #     room = MonitorRoom()
-    #     # room.run()

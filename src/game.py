@@ -35,6 +35,12 @@ def boost_crt_colors(surface):
     # pa.replace((93, 117, 129),  (60, 140, 180),  distance=3/255)  # too broad, affects background
     del pa
 
+def apply_crt(screen):
+    """ Amplify colors proportionally: brights get brighter, blacks stay black. """
+    crt_surface = screen.copy()
+    crt_surface.set_alpha(80)  # tune: higher = more vivid
+    screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+
 class Game:
     async def run(self):
         pygame.mixer.music.load(gv.resource_path("audio/rain_and_thunder.ogg"))
@@ -82,6 +88,7 @@ class Game:
                                 gv.khatchig.y_velocity = 0
                             gv.screen.blit(
                                 pygame.image.load(gv.resource_path(f"img/movie_png_seq{gv.movie_idx}/{file}")).convert_alpha(), (0, 0))
+                            apply_crt(gv.screen)
                             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                             if gv.save_screenshots and gv.master_save_screenshots:
                                 screen_shot_num = screen_shot_num + 1
@@ -107,6 +114,7 @@ class Game:
                             if file == "taichi27.jpg":
                                 gv.health_reverse_sfx.play()
                             gv.screen.blit(pygame.image.load(gv.resource_path(f"img/movie_png_seq4/{file}")).convert_alpha(), (0, 0))
+                            apply_crt(gv.screen)
                             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                             if gv.save_screenshots and gv.master_save_screenshots:
                                 screen_shot_num = screen_shot_num + 1
@@ -123,6 +131,7 @@ class Game:
                     for file in sorted_file_list:
                         if file.endswith('.jpg'):
                             gv.screen.blit(pygame.image.load(gv.resource_path(f"img/movie_png_seq6/{file}")).convert_alpha(), (0, 0))
+                            apply_crt(gv.screen)
                             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                             if gv.save_screenshots and gv.master_save_screenshots:
                                 screen_shot_num = screen_shot_num + 1
@@ -154,17 +163,38 @@ class Game:
 
                     img_flip = True
 
+                    prev_left_monitor = False
+                    prev_right_monitor = False
+
                     while gv.world_level == "monitor_room":
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                if event.key in monitor_rm.key_to_function:
-                                    # dictionary returns a method (run on itself)
-                                    monitor_rm.key_to_function[event.key](monitor_rm)
+
+                        # RCade input polling
+                        monitor_inputs = _get_input().to_py()
+
+                        # Start button: exit room
+                        if monitor_inputs["system"]["start_1p"] or monitor_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        else:
+                            if pygame.time.get_ticks() - monitor_rm.last_move_time > 150:
+                                moved = False
+                                if monitor_inputs["p1"]["left"]:
+                                    monitor_rm.rotate(-2)
+                                    moved = True
+                                elif monitor_inputs["p1"]["right"]:
+                                    monitor_rm.rotate(2)
+                                    moved = True
+                                elif monitor_inputs["p1"]["up"]:
+                                    monitor_rm.zoom(-2)
+                                    moved = True
+                                elif monitor_inputs["p1"]["down"]:
+                                    monitor_rm.zoom(2)
+                                    moved = True
+                                if moved:
+                                    monitor_rm.last_move_time = pygame.time.get_ticks()
 
                         if pygame.time.get_ticks() - monitor_rm.last_time_check > gv.ANIMATION_INTERVAL:
                             monitor_rm.last_time_check = pygame.time.get_ticks()
@@ -214,20 +244,58 @@ class Game:
                     img_flip = True
                     img_num = 0
 
+                    prev_a_nca = False
+                    prev_b_nca = False
+
                     while gv.world_level == "neural_cellular_automata_room_dist":
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                if event.key in nca_rm.key_to_function:
-                                    # message resets each time the user tries to use unavailable functionality
-                                    nca_rm.temp_message = True
-                                    gv.dialogue_counter = 0
-                                    gv.last_time_check_dialogue = pygame.time.get_ticks()
-                                    nca_rm.key_to_function[event.key](nca_rm)
+
+                        # RCade input polling
+                        nca_inputs = _get_input().to_py()
+                        curr_a_nca = nca_inputs["p1"]["a"]
+                        curr_b_nca = nca_inputs["p1"]["b"]
+                        a_pressed_nca = curr_a_nca and not prev_a_nca
+                        b_pressed_nca = curr_b_nca and not prev_b_nca
+
+                        # Start button: exit room
+                        if nca_inputs["system"]["start_1p"] or nca_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        else:
+                            # D-pad: rate-limited so holding doesn't move every frame
+                            if pygame.time.get_ticks() - nca_rm.last_move_time > 150:
+                                moved = False
+                                if nca_inputs["p1"]["left"]:
+                                    nca_rm.translate('left')
+                                    moved = True
+                                elif nca_inputs["p1"]["right"]:
+                                    nca_rm.translate('right')
+                                    moved = True
+                                elif nca_inputs["p1"]["up"]:
+                                    nca_rm.translate('up')
+                                    moved = True
+                                elif nca_inputs["p1"]["down"]:
+                                    nca_rm.translate('down')
+                                    moved = True
+                                if moved:
+                                    nca_rm.last_move_time = pygame.time.get_ticks()
+                            # A button (edge): add
+                            if a_pressed_nca:
+                                nca_rm.temp_message = True
+                                gv.dialogue_counter = 0
+                                gv.last_time_check_dialogue = pygame.time.get_ticks()
+                                nca_rm.translate('add')
+                            # B button (edge): clear
+                            if b_pressed_nca:
+                                nca_rm.temp_message = True
+                                gv.dialogue_counter = 0
+                                gv.last_time_check_dialogue = pygame.time.get_ticks()
+                                nca_rm.translate('clear')
+
+                        prev_a_nca = curr_a_nca
+                        prev_b_nca = curr_b_nca
 
                         if pygame.time.get_ticks() - nca_rm.last_time_check > gv.ANIMATION_INTERVAL / 2:
                             nca_rm.last_time_check = pygame.time.get_ticks()
@@ -267,18 +335,74 @@ class Game:
                 elif gv.world_level == "computer_room":
                     # the import creates the class object; we should update that
                     img_flip = True
+                    prev_ab_computer = False
+
                     while gv.world_level == "computer_room":
                         for event in pygame.event.get():
-                            # should put in the key_up events or turn moving left and right to false
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                if event.key in cr.key_to_function:
-                                    # dictionary returns a method (run on itself) which updates it's own 3d wireframe display
-                                    cr.key_to_function[event.key](cr.proj_viewer)
+
+                        # RCade input polling
+                        computer_inputs = _get_input().to_py()
+                        curr_a_computer = computer_inputs["p1"]["a"]
+                        curr_b_computer = computer_inputs["p1"]["b"]
+                        curr_ab_computer = curr_a_computer and curr_b_computer
+                        ab_pressed_computer = curr_ab_computer and not prev_ab_computer
+
+                        # Start button: exit room
+                        if computer_inputs["system"]["start_1p"] or computer_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        elif ab_pressed_computer:
+                            # A+B together: toggle shape
+                            if cr.proj_viewer.display_obj == "cube":
+                                cr.proj_viewer.changeObj("tetrahedron")
+                            else:
+                                cr.proj_viewer.changeObj("cube")
+                            gv.switch_sfx.play()
+                        else:
+                            if pygame.time.get_ticks() - cr.proj_viewer.last_move_time > 150:
+                                moved = False
+                                if curr_a_computer and not curr_b_computer:
+                                    # A held + d-pad: rotate X (up/down) and Y (left/right)
+                                    if computer_inputs["p1"]["left"]:
+                                        cr.proj_viewer.rotateAll('Y', 0.1)
+                                        moved = True
+                                    elif computer_inputs["p1"]["right"]:
+                                        cr.proj_viewer.rotateAll('Y', -0.1)
+                                        moved = True
+                                    elif computer_inputs["p1"]["up"]:
+                                        cr.proj_viewer.rotateAll('X', 0.1)
+                                        moved = True
+                                    elif computer_inputs["p1"]["down"]:
+                                        cr.proj_viewer.rotateAll('X', -0.1)
+                                        moved = True
+                                elif curr_b_computer and not curr_a_computer:
+                                    # B held + d-pad: rotate Z (left/right)
+                                    if computer_inputs["p1"]["left"]:
+                                        cr.proj_viewer.rotateAll('Z', 0.1)
+                                        moved = True
+                                    elif computer_inputs["p1"]["right"]:
+                                        cr.proj_viewer.rotateAll('Z', -0.1)
+                                        moved = True
+                                else:
+                                    # D-pad alone: translate
+                                    if computer_inputs["p1"]["left"]:
+                                        cr.proj_viewer.translateAll('x', -10)
+                                        moved = True
+                                    elif computer_inputs["p1"]["right"]:
+                                        cr.proj_viewer.translateAll('x', 10)
+                                        moved = True
+                                    elif computer_inputs["p1"]["up"]:
+                                        cr.proj_viewer.translateAll('y', -10)
+                                        moved = True
+                                    elif computer_inputs["p1"]["down"]:
+                                        cr.proj_viewer.translateAll('y', 10)
+                                        moved = True
+                                if moved:
+                                    cr.proj_viewer.last_move_time = pygame.time.get_ticks()
+
+                        prev_ab_computer = curr_ab_computer
 
                         if pygame.time.get_ticks() - cr.proj_viewer.last_time_check > gv.ANIMATION_INTERVAL:
                             cr.proj_viewer.last_time_check = pygame.time.get_ticks()
@@ -320,7 +444,6 @@ class Game:
                 elif gv.world_level == "soccer_room":
                     s_room = sr.init_ball_char()
                     bg_counter = 0
-                    prev_b_soccer = False
 
                     while gv.world_level == "soccer_room":
                         for event in pygame.event.get():
@@ -332,13 +455,11 @@ class Game:
                         s_room.mov_left = soccer_inputs["p1"]["left"]
                         s_room.mov_right = soccer_inputs["p1"]["right"]
 
-                        # B button exits room
-                        curr_b_soccer = soccer_inputs["p1"]["b"]
-                        if curr_b_soccer and not prev_b_soccer:
+                        # Start button: exit room
+                        if soccer_inputs["system"]["start_1p"] or soccer_inputs["system"]["start_2p"]:
                             gv.world_level = "top"
                             pygame.mixer.music.stop()
                             f.reset_music()
-                        prev_b_soccer = curr_b_soccer
 
                         bg_counter += 1
                         bg_idx = int((bg_counter / 20)) % 3
@@ -385,13 +506,31 @@ class Game:
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                if event.key in ecr.key_to_function:
-                                    # dictionary returns a method (run on itself) which updates it's own 3d wireframe display
-                                    ecr.key_to_function[event.key](ec_room)
+
+                        # RCade input polling
+                        ecr_inputs = _get_input().to_py()
+
+                        # Start button: exit room
+                        if ecr_inputs["system"]["start_1p"] or ecr_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        else:
+                            if pygame.time.get_ticks() - ec_room.last_move_time > 150:
+                                moved = False
+                                if ecr_inputs["p1"]["left"]:
+                                    ec_room.translate('x', -5)
+                                    moved = True
+                                elif ecr_inputs["p1"]["right"]:
+                                    ec_room.translate('x', 5)
+                                    moved = True
+                                elif ecr_inputs["p1"]["up"]:
+                                    ec_room.translate('y', -5)
+                                    moved = True
+                                elif ecr_inputs["p1"]["down"]:
+                                    ec_room.translate('y', 5)
+                                    moved = True
+                                if moved:
+                                    ec_room.last_move_time = pygame.time.get_ticks()
 
                         # 145 is the height of the y coordinate of the bottom edge of the letter box, which is like the top row of the image
                         if ec_room.pos_wallpaper == [0, 145] and ec_room.first_sfx:
@@ -439,10 +578,14 @@ class Game:
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
+
+                        # RCade input polling
+                        cat_bus_inputs = _get_input().to_py()
+
+                        # Start button: exit room
+                        if cat_bus_inputs["system"]["start_1p"] or cat_bus_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
 
                         if pygame.time.get_ticks() - cb_room.last_time_check_book > gv.DIALOGUE_INTERVAL / 2:
                             cb_room.book_down = not cb_room.book_down
@@ -498,15 +641,28 @@ class Game:
 
                     while gv.world_level == "ascii_room":
                         for event in pygame.event.get():
-                            # should put in the key_up events or turn moving left and right to false
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                if event.key in a_room.key_to_function:
-                                    a_room.key_to_function[event.key](a_room)
+
+                        # RCade input polling
+                        ascii_inputs = _get_input().to_py()
+
+                        # Start button: exit room
+                        if ascii_inputs["system"]["start_1p"] or ascii_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        else:
+                            # D-pad left/right: rate-limited
+                            if pygame.time.get_ticks() - a_room.last_move_time > 150:
+                                moved = False
+                                if ascii_inputs["p1"]["left"]:
+                                    a_room.translate('left')
+                                    moved = True
+                                elif ascii_inputs["p1"]["right"]:
+                                    a_room.translate('right')
+                                    moved = True
+                                if moved:
+                                    a_room.last_move_time = pygame.time.get_ticks()
 
                         gv.screen.blit(gv.track_img, [(a_room.stars_counter % gv.track_img.get_width()) - gv.track_img.get_width(), 155])
                         gv.screen.blit(gv.track_img, [a_room.stars_counter % gv.track_img.get_width(), 155])
@@ -547,13 +703,31 @@ class Game:
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                if event.key in b_room.key_to_function:
-                                    # dictionary returns a method (run on itself)
-                                    b_room.key_to_function[event.key](b_room)
+
+                        # RCade input polling
+                        brief_inputs = _get_input().to_py()
+
+                        # Start button: exit room
+                        if brief_inputs["system"]["start_1p"] or brief_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        else:
+                            if pygame.time.get_ticks() - b_room.last_move_time > 150:
+                                moved = False
+                                if brief_inputs["p1"]["left"]:
+                                    b_room.switch('left')
+                                    moved = True
+                                elif brief_inputs["p1"]["right"]:
+                                    b_room.switch('right')
+                                    moved = True
+                                elif brief_inputs["p1"]["up"]:
+                                    b_room.increment()
+                                    moved = True
+                                elif brief_inputs["p1"]["down"]:
+                                    b_room.open()
+                                    moved = True
+                                if moved:
+                                    b_room.last_move_time = pygame.time.get_ticks()
 
                         if b_room.game_loop_counter == 100:
                             b_room.open_try = False
@@ -637,10 +811,14 @@ class Game:
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.first_time = False  # turned off after we gave full dialogue the first time in the room
+
+                        # RCade input polling
+                        end_inputs = _get_input().to_py()
+
+                        # Start button: exit room
+                        if end_inputs["system"]["start_1p"] or end_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.first_time = False  # turned off after we gave full dialogue the first time in the room
 
                         if e_room.success and gv.dialogue_counter == 0:
                             pygame.mixer.music.unload()
@@ -685,19 +863,36 @@ class Game:
                     p_room = pr.create()
                     img_flip = True
 
+                    prev_a_part = False
+                    prev_b_part = False
+
                     while gv.world_level == "particle_affinity_room":
                         for event in pygame.event.get():
                             if event.type == pygame.QUIT:
                                 pygame.quit()
-                            elif event.type == pygame.KEYDOWN:
-                                if event.key == pygame.locals.K_SPACE:
-                                    gv.world_level = "top"
-                                    gv.door_sfx.play()
-                                elif event.key == pygame.K_p:
-                                    p_room.print(gv.surf)
-                                elif event.key == pygame.K_RETURN:
-                                    gv.switch_sfx.play()
-                                    p_room.reset = True
+
+                        # RCade input polling
+                        part_inputs = _get_input().to_py()
+                        curr_a_part = part_inputs["p1"]["a"]
+                        curr_b_part = part_inputs["p1"]["b"]
+                        a_pressed_part = curr_a_part and not prev_a_part
+                        b_pressed_part = curr_b_part and not prev_b_part
+
+                        # Start button: exit room
+                        if part_inputs["system"]["start_1p"] or part_inputs["system"]["start_2p"]:
+                            gv.world_level = "top"
+                            gv.door_sfx.play()
+                        else:
+                            # A button (edge): reset simulation (replaces K_RETURN)
+                            if a_pressed_part:
+                                gv.switch_sfx.play()
+                                p_room.reset = True
+                            # B button (edge): print (replaces K_p)
+                            if b_pressed_part:
+                                p_room.print(gv.surf)
+
+                        prev_a_part = curr_a_part
+                        prev_b_part = curr_b_part
 
                         p_room.step()
 
@@ -787,6 +982,7 @@ class Game:
                     for file in sorted_file_list:
                         if file.endswith('.jpg'):
                             gv.screen.blit(pygame.image.load(gv.resource_path(f"img/movie_png_seq7/{file}")).convert_alpha(), (0, 0))
+                            apply_crt(gv.screen)
                             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                             if gv.save_screenshots and gv.master_save_screenshots:
                                 screen_shot_num = screen_shot_num + 1
@@ -847,6 +1043,7 @@ class Game:
                         else:
                             s_img = pygame.image.load(gv.resource_path(f"img/transition/level_{gv.level-1}/{pic_idx}.png")).convert_alpha()
                         gv.screen.blit(s_img, (0, 0))
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         await asyncio.sleep(0)
 
@@ -1051,27 +1248,8 @@ class Game:
             prev_a = curr_a
             prev_b = curr_b
 
-            # darken darks (contrast pull-down)
-            # contrast_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
-            # contrast_surface.fill((210, 210, 210))  # values < 255 multiply (darken)
-            # gv.screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
-
-            # # then lift brightness back up
-            # brightness_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
-            # brightness_surface.fill((50, 50, 50))
-            # gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
-
-            # boost_crt_colors(gv.screen)
-
-            # contrast pull-down
-            contrast_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
-            contrast_surface.fill((210, 210, 210))
-            gv.screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
-
-            # brightness lift with a warm tint to counteract the blue cast
-            brightness_surface = pygame.Surface(gv.screen.get_size(), flags=pygame.SRCALPHA)
-            brightness_surface.fill((60, 50, 30))  # more red/green than blue
-            gv.screen.blit(brightness_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+            # CRT color amplification: vivid colors, blacks stay black
+            apply_crt(gv.screen)
 
             pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
             if gv.save_screenshots and gv.master_save_screenshots:

@@ -16,20 +16,24 @@ def draw_text(text, font, text_color, x, y):
 
 def draw_dialogue(text, x, y):
     # set dimensions of dialogue box
-    dialogue_surface = pygame.Surface((max([len(line) for line in text])*10, len(text)*13))
+    dialogue_surface = pygame.Surface((max([len(line) for line in text])*20, len(text)*26))
 
-    dialogue_font = pygame.font.Font(gv.resource_path("fonts/kongtext.ttf"), 10)
+    dialogue_font = pygame.font.Font(gv.resource_path("fonts/kongtext.ttf"), 20)
 
     for i, line in enumerate(text):
         text_surface = dialogue_font.render(line, True, gv.WHITE)
-        dialogue_surface.blit(text_surface, (0,i*15))
-    dialogue_rect = dialogue_surface.get_rect(midbottom=(x, y))
+        dialogue_surface.blit(text_surface, (0,i*30))
+    dialogue_rect = dialogue_surface.get_rect(midbottom=(x, y - 10))
+
+    # keep dialogue within screen
+    # dialogue_rect.clamp_ip(gv.screen.get_rect())
+    dialogue_rect.clamp_ip(gv.screen.get_rect().inflate(-50, -50))
 
     bg_rect = dialogue_rect.copy()
-    bg_rect.inflate_ip(10, 10)  # enlarge the copy in position
+    bg_rect.inflate_ip(20, 20)  # enlarge the copy in position
 
     frame_rect = bg_rect.copy()
-    frame_rect.inflate_ip(4, 4)
+    frame_rect.inflate_ip(8, 8)
 
     pygame.draw.rect(gv.screen, gv.WHITE, frame_rect)
     pygame.draw.rect(gv.screen, gv.BLACK, bg_rect)

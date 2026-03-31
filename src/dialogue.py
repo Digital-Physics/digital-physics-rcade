@@ -4,10 +4,10 @@ dialogue = {
     ["Hello, Khatchig", "Want to walk & talk?"],
     ["Have you seen my cat?"],
     ["Forget my problems", "Here are a few hints:"],
-    ["DOWN -> pick things up", "DOWN, DOWN -> put things down"],
-    ["DOWN, UP -> super jump"],
-    ["DOWN a mushroom -> +1 health"],
-    ["UP -> enter room", "SPACEBAR -> exit room"],
+    ["B -> pick things up", "B, B -> put things down"],
+    ["B, A -> super jump"],
+    ["Mushrooms -> +1 health"],
+    ["B -> enter room", "1P Start -> exit room"],
     ["Buena Suerte"],
   ],
   "hippie2": [
@@ -84,7 +84,7 @@ dialogue = {
     ["There are no parts", "That aren't the whole..."],
     ["Try to erase me", "I will still regrow."],
     ["..."],
-    ["Press SPACEBAR to exit."],
+    ["Press 1P Start to exit."],
   ],
   "erased_notkhatchig": [
     ["'You' did it!", "But 'I' am still here."],
@@ -180,7 +180,7 @@ dialogue = {
   "band_member_success": [
     ["..."],
     ["Congratulations, Khatchig!"],
-    ["You're our new road technician!"],
+    ["You're our new roadie!"],
     ["Synth-REVO is waiting."],
     ["Let's go!"]
   ],
@@ -200,9 +200,9 @@ dialogue = {
     ["Hello?"]
   ],
   "notkhatchig_temp": [
-    ["Our Neural Cellular Automaton", "Is not web-interactive yet."],
+    ["My Neural Cellular Automaton", "Is not web-interactive yet."],
     ["Check back soon."],
-    ["Press SPACEBAR to exit."],
+    ["Press 1P Start to exit."],
     ["..."]
   ]}
 

@@ -111,6 +111,7 @@ class ProjectionViewer:
         self.intro_complete = False
         self.cube_match = False
         self.tet_match = False
+        self.last_move_time = pygame.time.get_ticks()  # rate-limit d-pad movement
         self.solution_points_cube = [(486, 388), (465, 423), (504, 424), (482, 459), (528, 391), (545, 427), (524, 461)]
         self.solution_points_tetrahedron = [(645, 390), (609, 425), (680, 425), (646, 460)]
 
@@ -193,19 +194,6 @@ class ProjectionViewer:
         return False
 
 
-key_to_function = {
-    pygame.K_LEFT:   (lambda x: x.translateAll('x', -10)),
-    pygame.K_RIGHT:  (lambda x: x.translateAll('x',  10)),
-    pygame.K_DOWN:   (lambda x: x.translateAll('y',  10)),
-    pygame.K_UP:     (lambda x: x.translateAll('y', -10)),
-    pygame.K_EQUALS: (lambda x: x.changeObj("cube")),
-    pygame.K_MINUS: (lambda x: x.changeObj("tetrahedron")),
-    pygame.K_q: (lambda x: x.rotateAll('X', 0.1)),
-    pygame.K_w: (lambda x: x.rotateAll('X', -0.1)),
-    pygame.K_a: (lambda x: x.rotateAll('Y', 0.1)),
-    pygame.K_s: (lambda x: x.rotateAll('Y', -0.1)),
-    pygame.K_z: (lambda x: x.rotateAll('Z', 0.1)),
-    pygame.K_x: (lambda x: x.rotateAll('Z', -0.1))}
 
 
 def initialize(x_pos: int = 0, y_pos: int = 0, scale: float = 1) -> ProjectionViewer:
@@ -241,11 +229,6 @@ proj_viewer6 = initialize(400, 400 + 1600, 0.25)
 proj_viewer7 = initialize(400, 400 + 1600, 0.25)
 
 
-# def create(pv=proj_viewer):
-#     pv.run()
-
-
 def create_bg(pv=proj_viewer1, obj="tetrahedron", trans_dist=0, reverse=1):
     pv.changeObj(obj)
     pv.run_bg(trans_dist, reverse)
-

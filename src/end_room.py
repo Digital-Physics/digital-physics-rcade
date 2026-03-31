@@ -14,10 +14,10 @@ class EndRoom:
         self.success_font = pygame.font.Font(gv.resource_path("fonts/kongtext.ttf"), 16)
         self.success_text1 = self.success_font.render("Congratulations!", True, gv.WHITE)
         self.success_text2 = self.success_font.render("You Won a Free Movie Rental!", True, gv.WHITE)
-        self.success_text3 = self.success_font.render("Codes:", True, gv.WHITE)
-        self.success_text4 = self.success_font.render("strange_loop      (Free RENT)", True, gv.WHITE)
-        self.success_text5 = self.success_font.render("33                 (-33% BUY)", True, gv.WHITE)
-        self.success_text6 = self.success_font.render("Press SPACEBAR to watch movie.", True, gv.WHITE)
+        # self.success_text3 = self.success_font.render("Codes:", True, gv.WHITE)
+        # self.success_text4 = self.success_font.render("strange_loop      (Free RENT)", True, gv.WHITE)
+        # self.success_text5 = self.success_font.render("33                 (-33% BUY)", True, gv.WHITE)
+        self.success_text6 = self.success_font.render("Watch Digital Physics FREE on Tubi", True, gv.WHITE)
         # print("end room, in briefcase", gv.in_briefcase)
 
     def dialogue(self) -> None:

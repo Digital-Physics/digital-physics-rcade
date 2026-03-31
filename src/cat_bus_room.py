@@ -72,7 +72,7 @@ class CatBusRoom:
         else:
             temp_dialogue = gv.dialogue["hippie_book"][gv.dialogue_counter % len(gv.dialogue["hippie_book"])][:]
 
-        f.draw_dialogue(temp_dialogue, 200, 250)
+        f.draw_dialogue(temp_dialogue, 280, 250)
 
         if pygame.time.get_ticks() - gv.last_time_check_dialogue > gv.DIALOGUE_INTERVAL:
             gv.last_time_check_dialogue = pygame.time.get_ticks()
