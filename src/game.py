@@ -154,6 +154,7 @@ class Game:
                         for file in sorted_file_list:
                             if file.endswith('.jpg'):
                                 gv.screen.blit(pygame.image.load(gv.resource_path(f"img/movie_png_seq5/{file}")).convert_alpha(), (0, 0))
+                                apply_crt(gv.screen)
                                 pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                                 if gv.save_screenshots and gv.master_save_screenshots:
                                     screen_shot_num = screen_shot_num + 1
@@ -232,6 +233,7 @@ class Game:
                         if not monitor_rm.intro_complete:
                             if gv.intro_fade.fade():
                                 monitor_rm.intro_complete = True
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -325,6 +327,7 @@ class Game:
 
                         nca_rm.temp_dialogue()
 
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -434,6 +437,7 @@ class Game:
                         if not cr.proj_viewer.intro_complete:
                             if gv.intro_fade.fade():
                                 cr.proj_viewer.intro_complete = True
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -478,6 +482,7 @@ class Game:
                             if gv.intro_fade.fade():
                                 s_room.intro_complete = True
 
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -560,6 +565,7 @@ class Game:
                         if not ec_room.intro_complete:
                             if gv.intro_fade.fade():
                                 ec_room.intro_complete = True
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -628,6 +634,7 @@ class Game:
                             if gv.intro_fade.fade():
                                 cb_room.intro_complete = True
 
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -688,6 +695,7 @@ class Game:
                         if not a_room.intro_complete:
                             if gv.intro_fade.fade():
                                 a_room.intro_complete = True
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -791,6 +799,7 @@ class Game:
                         if not b_room.intro_complete:
                             if gv.intro_fade.fade():
                                 b_room.intro_complete = True
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -852,6 +861,7 @@ class Game:
                         if not e_room.intro_complete:
                             if gv.intro_fade.fade():
                                 e_room.intro_complete = True
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -968,6 +978,7 @@ class Game:
                             params_dict = pr.dict_creator(params)
                             p_room.__init__(params_dict)
 
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
@@ -1003,6 +1014,7 @@ class Game:
                         gv.screen.blit(e_room.success_text4, (120, 340))
                         gv.screen.blit(e_room.success_text5, (120, 370))
                         gv.screen.blit(e_room.success_text6, (120, 410))
+                        apply_crt(gv.screen)
                         pygame.transform.scale(gv.screen, (gv.DISPLAY_WIDTH, gv.DISPLAY_HEIGHT), gv.display_surface); pygame.display.flip()
                         if gv.save_screenshots and gv.master_save_screenshots:
                             screen_shot_num = screen_shot_num + 1
