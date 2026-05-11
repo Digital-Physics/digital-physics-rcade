@@ -92,7 +92,7 @@ def apply_crt(screen):
 
     # Vivid boost — reduced from 80 to 55 to stop bright colors oversaturating
     crt_surface = screen.copy()
-    crt_surface.set_alpha(55)
+    crt_surface.set_alpha(40)
     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
 class Game:
