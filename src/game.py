@@ -35,10 +35,26 @@ def boost_crt_colors(surface):
     # pa.replace((93, 117, 129),  (60, 140, 180),  distance=3/255)  # too broad, affects background
     del pa
 
+# def apply_crt(screen):
+#     """ Amplify colors proportionally: brights get brighter, blacks stay black. """
+#     crt_surface = screen.copy()
+#     crt_surface.set_alpha(80)  # tune: higher = more vivid
+#     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 def apply_crt(screen):
     """ Amplify colors proportionally: brights get brighter, blacks stay black. """
+    # Green channel boost to separate dark tree shades before contrast is applied
+    green_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+    green_surface.fill((0, 25, 0))
+    screen.blit(green_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+
+    # Softer contrast (225 instead of 210 avoids crushing dark greens)
+    contrast_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+    contrast_surface.fill((225, 225, 220))
+    screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+
+    # Original vivid boost
     crt_surface = screen.copy()
-    crt_surface.set_alpha(80)  # tune: higher = more vivid
+    crt_surface.set_alpha(80)
     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
 class Game:
