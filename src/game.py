@@ -87,7 +87,8 @@ def apply_crt(screen):
 
     # Softer contrast (225 avoids crushing dark greens)
     contrast_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
-    contrast_surface.fill((225, 225, 220))
+    # contrast_surface.fill((225, 225, 220))
+    contrast_surface.fill((218, 218, 205))
     screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
 
     # Vivid boost — reduced from 80 to 55 to stop bright colors oversaturating
