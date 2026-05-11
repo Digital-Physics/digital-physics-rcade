@@ -56,27 +56,43 @@ def boost_crt_colors(surface):
 #     crt_surface = screen.copy()
 #     crt_surface.set_alpha(80)
 #     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+# def apply_crt(screen):
+#     """ Amplify colors proportionally: brights get brighter, blacks stay black. """
+#     # Green boost only for dark pixels (to separate dark tree shades without blowing out light colors)
+#     dark_mask = screen.copy()
+#     dark_mask.fill((255, 255, 255))  # start white
+#     # pixels brighter than ~100 will subtract toward zero, leaving only dark areas
+#     dark_mask.blit(screen, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
+#     dark_mask.set_alpha(60)  # tune: higher = stronger dark-only green lift
+#     green_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+#     green_surface.fill((0, 80, 0))
+#     green_surface.blit(dark_mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+#     screen.blit(green_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+
+#     # Softer contrast (225 instead of 210 avoids crushing dark greens)
+#     contrast_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+#     contrast_surface.fill((225, 225, 220))
+#     screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+
+#     # Original vivid boost
+#     crt_surface = screen.copy()
+#     crt_surface.set_alpha(80)
+#     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 def apply_crt(screen):
     """ Amplify colors proportionally: brights get brighter, blacks stay black. """
-    # Green boost only for dark pixels (to separate dark tree shades without blowing out light colors)
-    dark_mask = screen.copy()
-    dark_mask.fill((255, 255, 255))  # start white
-    # pixels brighter than ~100 will subtract toward zero, leaving only dark areas
-    dark_mask.blit(screen, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
-    dark_mask.set_alpha(60)  # tune: higher = stronger dark-only green lift
+    # Green channel boost to separate dark tree shades
     green_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
-    green_surface.fill((0, 80, 0))
-    green_surface.blit(dark_mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+    green_surface.fill((0, 25, 0))
     screen.blit(green_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
-    # Softer contrast (225 instead of 210 avoids crushing dark greens)
+    # Softer contrast (225 avoids crushing dark greens)
     contrast_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
     contrast_surface.fill((225, 225, 220))
     screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
 
-    # Original vivid boost
+    # Vivid boost — reduced from 80 to 55 to stop bright colors oversaturating
     crt_surface = screen.copy()
-    crt_surface.set_alpha(80)
+    crt_surface.set_alpha(55)
     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
 class Game:
