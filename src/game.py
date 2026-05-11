@@ -78,22 +78,42 @@ def boost_crt_colors(surface):
 #     crt_surface = screen.copy()
 #     crt_surface.set_alpha(80)
 #     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+# def apply_crt(screen):
+#     """ Amplify colors proportionally: brights get brighter, blacks stay black. """
+#     # Green channel boost to separate dark tree shades
+#     green_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+#     green_surface.fill((0, 25, 0))
+#     screen.blit(green_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+
+#     # Softer contrast (225 avoids crushing dark greens)
+#     contrast_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+#     # contrast_surface.fill((225, 225, 220))
+#     contrast_surface.fill((218, 218, 205))
+#     screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+
+#     # Vivid boost — reduced from 80 to 55 to stop bright colors oversaturating
+#     crt_surface = screen.copy()
+#     crt_surface.set_alpha(40)
+#     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 def apply_crt(screen):
-    """ Amplify colors proportionally: brights get brighter, blacks stay black. """
+    # Pull whites down slightly so they don't clip
+    white_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
+    white_surface.fill((15, 15, 15))
+    screen.blit(white_surface, (0, 0), special_flags=pygame.BLEND_RGB_SUB)
+
     # Green channel boost to separate dark tree shades
     green_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
     green_surface.fill((0, 25, 0))
     screen.blit(green_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
-    # Softer contrast (225 avoids crushing dark greens)
+    # Softer contrast
     contrast_surface = pygame.Surface(screen.get_size(), flags=pygame.SRCALPHA)
-    # contrast_surface.fill((225, 225, 220))
-    contrast_surface.fill((218, 218, 205))
+    contrast_surface.fill((225, 225, 220))
     screen.blit(contrast_surface, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
 
-    # Vivid boost — reduced from 80 to 55 to stop bright colors oversaturating
+    # Vivid boost
     crt_surface = screen.copy()
-    crt_surface.set_alpha(40)
+    crt_surface.set_alpha(55)
     screen.blit(crt_surface, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
 
 class Game:
